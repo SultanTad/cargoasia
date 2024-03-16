@@ -1,15 +1,15 @@
 <script setup>
-import Header from "./components/Header.vue"
-import Main from "./components/Main.vue"
+import Footer from "./components/Footer.vue";
+import Header from "./components/Header.vue";
+
 </script>
 
 <template>
   <div class="wrapper">
-    <Header/>
-    <Main/>
+    <Header />
+    <router-view></router-view>
+    <Footer />
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

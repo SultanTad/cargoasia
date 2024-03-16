@@ -6,13 +6,22 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 
+import ModalCities from "../components/ModalCities.vue";
+import ModalForm from "../components/ModalForm.vue";
+import ModalSuccess from "../components/ModalSuccess.vue";
+
 const calcVarning = ref(false);
 const activeStepTwo = ref(false);
 const activeStepThree = ref(false);
+const serviceActiveCities = ref(false);
 const deactiveStepOne = ref(false);
 const deactiveStepTwo = ref(false);
+const modalForm = ref(false);
+const modalSuccess = ref(false);
 const prev = ref(null);
 const next = ref(null);
+const optionsPrev = ref(null);
+const optionsNext = ref(null);
 
 const calcStepOne = reactive({
   from: "",
@@ -34,12 +43,18 @@ const formQuestions = reactive({
   question: "",
 });
 
-const errors = {
+const errors = reactive({
   name: false,
   phone: false,
   email: false,
   question: false,
-};
+});
+
+const titleModalForm = reactive([
+  { title: "Оставить заявку на расчет стоимости" },
+]);
+
+const btnModalForm = reactive([{ btn: "Оставить заявку" }]);
 
 const validateStepOne = () => {
   for (let key in calcStepOne) {
@@ -71,30 +86,78 @@ const validEmail = (email) => {
 };
 
 const validatePhone = (phone) => {
-  const phoneRegex = /^\+(?:[0-9] ?){6,14}[0-9]$/;
+  const phoneRegex = /^(?:[0-9] ?){6,14}[0-9]$/;
   return phoneRegex.test(phone);
 };
 
 const validateFormQuestions = () => {
+  if (formQuestions.name.length === 0) {
+    errors.name = true;
+  } else {
+    errors.name = false;
+  }
+
   if (formQuestions.question.length === 0) {
     errors.question = true;
   } else {
     errors.question = false;
   }
 
-  if (!validatePhone(formQuestions.phone) && !validEmail(formQuestions.email)) {
+  if (!validatePhone(formQuestions.phone)) {
     errors.phone = true;
-    errors.email = true;
   } else {
     errors.phone = false;
+  }
+
+  if (!validEmail(formQuestions.email)) {
+    errors.email = true;
+  } else {
     errors.email = false;
+  }
+
+  if (
+    errors.name == false &&
+    errors.question == false &&
+    errors.phone == false &&
+    errors.email == false
+  ) {
+    modalSuccess.value = true;
+    modalForm.value = false;
+    document.body.style.overflow = "hidden";
   }
 };
 
 const goBackStepOne = () => {
   activeStepTwo.value = false;
-  deactiveStepOne.value = true;
+  deactiveStepOne.value = false;
 };
+
+const activeCityModal = () => {
+  serviceActiveCities.value = true;
+  document.body.style.overflow = "hidden";
+};
+
+const deactiveCityModal = () => {
+  serviceActiveCities.value = false;
+  document.body.style.overflow = "inherit";
+};
+
+const activeModalForm = () => {
+  modalForm.value = true;
+  document.body.style.overflow = "hidden";
+};
+
+const deactiveModalForm = () => {
+  modalForm.value = false;
+  document.body.style.overflow = "inherit";
+};
+
+const deactiveModalSuccess = () => {
+  modalSuccess.value = false;
+  document.body.style.overflow = "inherit";
+};
+
+
 </script>
 
 <template>
@@ -124,7 +187,7 @@ const goBackStepOne = () => {
               Если мы не уложимся в обозначенные сроки, <br />
               доставка груза со&nbsp;<i>скидкой до 90%</i>
             </p>
-            <div class="slider-item__arrow">
+            <a href="#calc" class="slider-item__arrow">
               <picture
                 ><source srcset="/images/down-arrow.webp" type="image/webp" />
                 <img
@@ -132,7 +195,7 @@ const goBackStepOne = () => {
                   alt="arrow-down"
                   class="slider-item__arrow-img"
               /></picture>
-            </div>
+            </a>
           </div></div
       ></swiper-slide>
       <swiper-slide
@@ -147,7 +210,7 @@ const goBackStepOne = () => {
               Если мы не уложимся в обозначенные сроки, <br />
               доставка груза со&nbsp;<i>скидкой до 90%</i>
             </p>
-            <div class="slider-item__arrow">
+            <a href="#calc" class="slider-item__arrow">
               <picture
                 ><source srcset="/images/down-arrow.webp" type="image/webp" />
                 <img
@@ -155,7 +218,7 @@ const goBackStepOne = () => {
                   alt="arrow-down"
                   class="slider-item__arrow-img"
               /></picture>
-            </div>
+            </a>
           </div></div
       ></swiper-slide>
       <swiper-slide
@@ -170,7 +233,7 @@ const goBackStepOne = () => {
               Если мы не уложимся в обозначенные сроки, <br />
               доставка груза со&nbsp;<i>скидкой до 90%</i>
             </p>
-            <div class="slider-item__arrow">
+            <a href="#calc" class="slider-item__arrow">
               <picture
                 ><source srcset="/images/down-arrow.webp" type="image/webp" />
                 <img
@@ -178,7 +241,7 @@ const goBackStepOne = () => {
                   alt="arrow-down"
                   class="slider-item__arrow-img"
               /></picture>
-            </div>
+            </a>
           </div></div
       ></swiper-slide>
       <swiper-slide
@@ -193,7 +256,7 @@ const goBackStepOne = () => {
               Если мы не уложимся в обозначенные сроки, <br />
               доставка груза со&nbsp;<i>скидкой до 90%</i>
             </p>
-            <div class="slider-item__arrow">
+            <a href="#calc" class="slider-item__arrow">
               <picture
                 ><source srcset="/images/down-arrow.webp" type="image/webp" />
                 <img
@@ -201,7 +264,7 @@ const goBackStepOne = () => {
                   alt="arrow-down"
                   class="slider-item__arrow-img"
               /></picture>
-            </div>
+            </a>
           </div></div
       ></swiper-slide>
 
@@ -310,7 +373,7 @@ const goBackStepOne = () => {
             </div>
             <div
               class="calc__step2"
-              :class="{ active: activeStepTwo, disabled: deactiveStepTwo }"
+              :class="{ calcActive: activeStepTwo, disabled: deactiveStepTwo }"
             >
               <div class="calc__inp-wrapp">
                 <div class="calc__inp-wrap-wrap">
@@ -353,19 +416,24 @@ const goBackStepOne = () => {
                   >
                 </div>
               </div>
-              <button
-                class="calc__step1-btn main-btn btn-reverse"
-                @click="goBackStepOne"
-              >
-                Назад
-              </button>
-              <button class="calc__step2-btn main-btn" @click="validateStepTwo">
-                Отправить</button
-              ><span class="calc-varning" :class="{ varning: calcVarning }"
-                >Заполните пропущенный блок *</span
-              >
+              <div class="calc-btns">
+                <button
+                  class="calc__step1-btn main-btn btn-reverse"
+                  @click="goBackStepOne"
+                >
+                  Назад
+                </button>
+                <button
+                  class="calc__step2-btn main-btn"
+                  @click="validateStepTwo"
+                >
+                  Отправить</button
+                ><span class="calc-varning" :class="{ varning: calcVarning }"
+                  >Заполните пропущенный блок *</span
+                >
+              </div>
             </div>
-            <div class="calc__step3" :class="{ active: activeStepThree }">
+            <div class="calc__step3" :class="{ calcActive: activeStepThree }">
               <div class="calc__step3-wrapper">
                 <p class="calc__step3-text">
                   Спасибо за заявку. Мы обязатальено свяжемся с вами
@@ -524,11 +592,27 @@ const goBackStepOne = () => {
         <h2 class="options__title title-block">
           Варианты доставки грузов из Китая
         </h2>
+        <button
+          ref="optionsPrev"
+          class="swiper-button-prev slick-prev slick-arrow"
+        ></button>
         <swiper
           class="options-swiper"
           :modules="[Navigation]"
-          :navigation="true"
-          :slides-per-view="auto"
+          :loop="true"
+          :navigation="{ prevEl: optionsPrev, nextEl: optionsNext }"
+          :spaceBetween="25"
+          :breakpoints="{
+            0: {
+              slidesPerView: 1,
+            },
+            700: {
+              slidesPerView: 2,
+            },
+            900: {
+              slidesPerView: 3,
+            },
+          }"
         >
           <swiper-slide>
             <div class="options__card-imgBl">
@@ -574,9 +658,13 @@ const goBackStepOne = () => {
                 <span class="options__price-item3">$/кг</span>
               </div>
             </div>
-            <a href="#" class="options__btn raschet_btn" tabindex="-1"
-              >Оставить заявку</a
+            <div
+              @click="activeModalForm"
+              class="options__btn raschet_btn"
+              tabindex="-1"
             >
+              Оставить заявку
+            </div>
           </swiper-slide>
 
           <swiper-slide>
@@ -623,9 +711,13 @@ const goBackStepOne = () => {
                 <span class="options__price-item3">$/кг</span>
               </div>
             </div>
-            <a href="#" class="options__btn raschet_btn" tabindex="-1"
-              >Оставить заявку</a
+            <div
+              @click="activeModalForm"
+              class="options__btn raschet_btn"
+              tabindex="-1"
             >
+              Оставить заявку
+            </div>
           </swiper-slide>
 
           <swiper-slide>
@@ -672,9 +764,13 @@ const goBackStepOne = () => {
                 <span class="options__price-item3">$/кг</span>
               </div>
             </div>
-            <a href="#" class="options__btn raschet_btn" tabindex="-1"
-              >Оставить заявку</a
+            <div
+              @click="activeModalForm"
+              class="options__btn raschet_btn"
+              tabindex="-1"
             >
+              Оставить заявку
+            </div>
           </swiper-slide>
 
           <swiper-slide>
@@ -721,9 +817,13 @@ const goBackStepOne = () => {
                 <span class="options__price-item3">$/кг</span>
               </div>
             </div>
-            <a href="#" class="options__btn raschet_btn" tabindex="0"
-              >Оставить заявку</a
+            <div
+              @click="activeModalForm"
+              class="options__btn raschet_btn"
+              tabindex="0"
             >
+              Оставить заявку
+            </div>
           </swiper-slide>
 
           <swiper-slide>
@@ -770,9 +870,13 @@ const goBackStepOne = () => {
                 <span class="options__price-item3">$/кг</span>
               </div>
             </div>
-            <a href="#" class="options__btn raschet_btn" tabindex="0"
-              >Оставить заявку</a
+            <div
+              @click="activeModalForm"
+              class="options__btn raschet_btn"
+              tabindex="0"
             >
+              Оставить заявку
+            </div>
           </swiper-slide>
 
           <swiper-slide>
@@ -819,9 +923,13 @@ const goBackStepOne = () => {
                 <span class="options__price-item3">$/кг</span>
               </div>
             </div>
-            <a href="#" class="options__btn raschet_btn" tabindex="0"
-              >Оставить заявку</a
+            <div
+              @click="activeModalForm"
+              class="options__btn raschet_btn"
+              tabindex="0"
             >
+              Оставить заявку
+            </div>
           </swiper-slide>
 
           <swiper-slide>
@@ -868,9 +976,13 @@ const goBackStepOne = () => {
                 <span class="options__price-item3">$/кг</span>
               </div>
             </div>
-            <a href="#" class="options__btn raschet_btn" tabindex="-1"
-              >Оставить заявку</a
+            <div
+              @click="activeModalForm"
+              class="options__btn raschet_btn"
+              tabindex="-1"
             >
+              Оставить заявку
+            </div>
           </swiper-slide>
 
           <swiper-slide>
@@ -917,9 +1029,13 @@ const goBackStepOne = () => {
                 <span class="options__price-item3">$/кг</span>
               </div>
             </div>
-            <a href="#" class="options__btn raschet_btn" tabindex="-1"
-              >Оставить заявку</a
+            <div
+              @click="activeModalForm"
+              class="options__btn raschet_btn"
+              tabindex="-1"
             >
+              Оставить заявку
+            </div>
           </swiper-slide>
 
           <swiper-slide>
@@ -966,9 +1082,13 @@ const goBackStepOne = () => {
                 <span class="options__price-item3">$/кг</span>
               </div>
             </div>
-            <a href="#" class="options__btn raschet_btn" tabindex="-1"
-              >Оставить заявку</a
+            <div
+              @click="activeModalForm"
+              class="options__btn raschet_btn"
+              tabindex="-1"
             >
+              Оставить заявку
+            </div>
           </swiper-slide>
 
           <swiper-slide>
@@ -1015,9 +1135,13 @@ const goBackStepOne = () => {
                 <span class="options__price-item3">$/кг</span>
               </div>
             </div>
-            <a href="#" class="options__btn raschet_btn" tabindex="-1"
-              >Оставить заявку</a
+            <div
+              @click="activeModalForm"
+              class="options__btn raschet_btn"
+              tabindex="-1"
             >
+              Оставить заявку
+            </div>
           </swiper-slide>
 
           <swiper-slide>
@@ -1064,11 +1188,19 @@ const goBackStepOne = () => {
                 <span class="options__price-item3">$/кг</span>
               </div>
             </div>
-            <a href="#" class="options__btn raschet_btn" tabindex="-1"
-              >Оставить заявку</a
+            <div
+              @click="activeModalForm"
+              class="options__btn raschet_btn"
+              tabindex="-1"
             >
+              Оставить заявку
+            </div>
           </swiper-slide>
         </swiper>
+        <button
+          ref="optionsNext"
+          class="swiper-button-next slick-next slick-arrow"
+        ></button>
       </div>
     </div>
   </section>
@@ -1083,9 +1215,9 @@ const goBackStepOne = () => {
           Опытный логист подберёт для вас оптимальный вариант доставки вашего
           груза из Китая в Россию
         </p>
-        <a href="" class="order__btn main-btn raschet_btn"
-          >Получить консультацию</a
-        >
+        <div @click="activeModalForm" class="order__btn main-btn raschet_btn">
+          Получить консультацию
+        </div>
       </div>
     </div>
   </section>
@@ -1104,7 +1236,6 @@ const goBackStepOne = () => {
             :modules="[Navigation]"
             :navigation="{ prevEl: prev, nextEl: next }"
             :loop="true"
-            :slides-per-view="auto"
             :space-between="30"
           >
             <swiper-slide class="services__card">
@@ -1313,9 +1444,13 @@ const goBackStepOne = () => {
                 <li class="services__right-item">Казань</li>
               </ul>
             </div>
-            <a href="#" class="services__right-link"
-              >Все города доставки и адреса терминалов..</a
-            >
+            <div class="services__right-link" @click="activeCityModal">
+              Все города доставки и адреса терминалов..
+            </div>
+            <ModalCities
+              v-if="serviceActiveCities"
+              @close="deactiveCityModal"
+            />
           </div>
         </div>
       </div>
@@ -1413,24 +1548,15 @@ const goBackStepOne = () => {
             <form action="" class="questions__right-form" @submit.prevent>
               <input type="text" value="" style="display: none" />
               <input
-                v-if="
-                  formQuestions.name.length === 0
-                    ? (errors.name = true)
-                    : (errors.name = false)
-                "
                 type="text"
                 required=""
                 class="questions__form-inp"
                 :class="{ err: errors.name }"
                 placeholder="Имя *"
                 v-model="formQuestions.name"
+                @input="errors.name = false"
               />
               <input
-                v-if="
-                  !validatePhone(formQuestions.phone)
-                    ? (errors.phone = true)
-                    : (errors.phone = false)
-                "
                 type="tel"
                 data-rule="tel"
                 required=""
@@ -1438,31 +1564,24 @@ const goBackStepOne = () => {
                 :class="{ err: errors.phone }"
                 placeholder="Телефон *"
                 v-model="formQuestions.phone"
+                @input="errors.phone = false"
               />
               <input
-              v-if="
-                  !validatePhone(formQuestions.email)
-                    ? (errors.email = true)
-                    : (errors.email = false)
-                "
                 type="email"
                 required=""
                 class="questions__form-inp"
                 :class="{ err: errors.email }"
                 placeholder="e-mail почта"
                 v-model="formQuestions.email"
+                @input="errors.email = false"
               />
               <textarea
-                v-if="
-                  formQuestions.question.length === 0
-                    ? (errors.question = true)
-                    : (errors.question = false)
-                "
                 class="questions__form-inp"
                 :class="{ err: errors.question }"
                 rows="4"
                 placeholder="Ваш вопрос"
                 v-model="formQuestions.question"
+                @input="errors.question = false"
               ></textarea>
               <div class="personal-data__wrap">
                 <label>
@@ -1478,7 +1597,10 @@ const goBackStepOne = () => {
                   >
                 </label>
               </div>
-              <button class="questions__form-btn main-btn">
+              <button
+                class="questions__form-btn main-btn"
+                @click="validateFormQuestions"
+              >
                 Отправить вопрос
               </button>
             </form>
@@ -1524,19 +1646,20 @@ const goBackStepOne = () => {
         ваш груз в Москву, а также в другие регионы России.
       </p>
       <h2>КАРГО из Китая в Россию</h2>
-      Если у вас небольшие партии, то КАРГО&nbsp;- это лучшее решение. Мы
-      доставим весь ваш товар под ключ. Мы сами оформим все документы и проведем
-      переговоры с продавцами, вам нужно будет только забрать товар в России.
-      Доставка из Китая КАРГО&nbsp;наилучшим образом подходит, когда вы
-      самостоятельно не можете оформить сертификаты на продукцию и другие
-      документы. При этом
-      <b
-        >цена на КАРГО выходит порой выгоднее обычного таможенного
-        оформления.</b
-      >
-      КАРГО доставка из Китая в Москву - одна из ключевых наших
-      специализаций.<br />
-      <br />
+      <p>
+        Если у вас небольшие партии, то КАРГО&nbsp;- это лучшее решение. Мы
+        доставим весь ваш товар под ключ. Мы сами оформим все документы и
+        проведем переговоры с продавцами, вам нужно будет только забрать товар в
+        России. Доставка из Китая КАРГО&nbsp;наилучшим образом подходит, когда
+        вы самостоятельно не можете оформить сертификаты на продукцию и другие
+        документы. При этом
+        <b
+          >цена на КАРГО выходит порой выгоднее обычного таможенного
+          оформления.</b
+        >
+        КАРГО доставка из Китая в Москву - одна из ключевых наших специализаций.
+      </p>
+
       <h2>Доставка грузов из Китая</h2>
       <p>
         Наш принцип работы - это сделать процесс доставки максимально удобным и
@@ -1545,8 +1668,10 @@ const goBackStepOne = () => {
         деловые связи с международными партнёрами и благодаря этому весь процесс
         доставки максимально оптимизирован.
       </p>
-      Мы ставим в приоритет сохранность вашего груза при транспортировке и
-      соблюдения сроков доставки.
+      <p>
+        Мы ставим в приоритет сохранность вашего груза при транспортировке и
+        соблюдения сроков доставки.
+      </p>
       <p></p>
       <h2>Почему Азия Карго?</h2>
       <ul>
@@ -1610,6 +1735,56 @@ const goBackStepOne = () => {
       <p></p>
     </div>
   </section>
+
+  <ModalForm
+    @validateBtn="validateFormQuestions"
+    v-if="modalForm"
+    @close="deactiveModalForm"
+    :titleModalForm="titleModalForm"
+    :btnModalForm="btnModalForm"
+  >
+    <template #modal-form>
+      <input type="text" value="" style="display: none" />
+      <input
+        type="text"
+        required=""
+        class="questions__form-inp"
+        :class="{ err: errors.name }"
+        placeholder="Имя"
+        v-model="formQuestions.name"
+        @input="errors.name = false"
+      />
+      <input
+        type="tel"
+        data-rule="tel"
+        required=""
+        class="questions__form-inp"
+        :class="{ err: errors.phone }"
+        placeholder="Телефон"
+        v-model="formQuestions.phone"
+        @input="errors.phone = false"
+      />
+      <input
+        type="email"
+        required=""
+        class="questions__form-inp"
+        :class="{ err: errors.email }"
+        placeholder="e-mail"
+        v-model="formQuestions.email"
+        @input="errors.email = false"
+      />
+      <textarea
+        class="questions__form-inp"
+        :class="{ err: errors.question }"
+        rows="4"
+        placeholder="Описание груза"
+        v-model="formQuestions.question"
+        @input="errors.question = false"
+      ></textarea>
+    </template>
+  </ModalForm>
+
+  <ModalSuccess v-if="modalSuccess" @close="deactiveModalSuccess" />
 </template>
 
 <style>
@@ -1650,6 +1825,11 @@ const goBackStepOne = () => {
   max-width: 70%;
   margin-bottom: 45px;
 }
+
+.slider-item__subtitle {
+  font-weight: bold;
+}
+
 .promo-swiper .swiper-slide {
   background-repeat: no-repeat;
   background-position: center top;
@@ -1764,10 +1944,18 @@ const goBackStepOne = () => {
   -ms-flex-pack: center;
   justify-content: center;
   height: 50px;
-  bottom: 0;
+  bottom: 89px;
   position: absolute;
   -ms-flex-item-align: center;
   align-self: center;
+  cursor: pointer;
+}
+
+.calc__step2 .btn-reverse {
+  padding: 15px 30px 15px 70px;
+  background-image: url(../images/arrow-btn-back.png) !important;
+  background-position: 8% center;
+  margin-right: 10px;
 }
 
 .main-btn {
@@ -1782,10 +1970,6 @@ const goBackStepOne = () => {
   background-image: url(/images/arrow-btn.webp);
   background-repeat: no-repeat;
   background-position: 95% center;
-}
-
-.main-btn:hover {
-  background-position: 98% center;
 }
 
 .main-btn {
@@ -1922,12 +2106,15 @@ const goBackStepOne = () => {
   background-color: #ffb900;
 }
 
-.calc__step3.active {
+.calc__step3.calcActive {
   display: block;
 }
 
-.calc__step2.active {
-  display: block;
+.calc__step2.calcActive {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .calc__inp-wrap-wrap :first-child {
@@ -2566,8 +2753,6 @@ input:focus:required:invalid {
 .options-swiper .swiper-slide {
   border-radius: 10px;
   overflow: hidden;
-  max-width: 359px;
-  margin-right: 25px;
 }
 
 .options__card-img {
@@ -2643,10 +2828,7 @@ input:focus:required:invalid {
   display: block;
   width: 100%;
   background-color: #ffbe2e;
-}
-
-.options__btn:hover {
-  background-color: #fbca5f;
+  cursor: pointer;
 }
 
 .options .slick-arrow {
@@ -2655,28 +2837,16 @@ input:focus:required:invalid {
   transition: 0.3s;
 }
 
-.options .slick-arrow:hover {
-  right: -5px !important;
-}
-
 .options .slick-arrow.slick-prev {
   -webkit-transition: 0.3s;
   -o-transition: 0.3s;
   transition: 0.3s;
 }
 
-.options .slick-arrow.slick-prev:hover {
-  left: -5px !important;
-}
-
 .options__card-content {
   -webkit-transition: 0.3s;
   -o-transition: 0.3s;
   transition: 0.3s;
-}
-
-.options__card-content:hover {
-  background-color: #fff;
 }
 
 .options .slick-arrow {
@@ -2687,39 +2857,23 @@ input:focus:required:invalid {
   margin: -25px 0 0 0;
   position: absolute;
   font-size: 0;
-  background-color: 0;
   width: 50px;
   height: 50px;
 }
 
 .options .slick-arrow.slick-prev {
   left: 0;
-  background-image: url(../images/prev.png);
+  background-image: url(../images/prev.webp);
   background-repeat: no-repeat;
   background-position: center;
-}
-
-.options .slick-arrow.slick-prev:hover {
-  -webkit-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  transform: rotate(180deg);
-  background-image: url(../images/next.png);
 }
 
 .webp .options .slick-arrow.slick-prev {
   background-image: url(../images/prev.webp);
 }
 
-.webp .options .slick-arrow.slick-prev:hover {
-  background-image: url(../images/next.webp);
-}
-
 .webp .options .slick-arrow.slick-next {
   background-image: url(../images/prev.webp);
-}
-
-.webp .options .slick-arrow.slick-next:hover {
-  background-image: url(../images/next.webp);
 }
 
 .webp .order__btn.main-btn {
@@ -2731,16 +2885,9 @@ input:focus:required:invalid {
   -webkit-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   transform: rotate(180deg);
-  background-image: url(../images/prev.png);
+  background-image: url(../images/prev.webp);
   background-repeat: no-repeat;
   background-position: center;
-}
-
-.options .slick-arrow.slick-next:hover {
-  -webkit-transform: none;
-  -ms-transform: none;
-  transform: none;
-  background-image: url(../images/next.png);
 }
 
 .order {
@@ -2794,10 +2941,6 @@ input:focus:required:invalid {
   background-color: #c52626;
 }
 
-.order__btn:hover {
-  background-color: #000 !important;
-}
-
 .services-slider {
   max-width: 1160px;
 }
@@ -2831,10 +2974,6 @@ input:focus:required:invalid {
   left: 0;
   bottom: 0;
   position: absolute;
-}
-
-.services__link:hover {
-  color: #ffb900;
 }
 
 .services__content {
@@ -2933,10 +3072,7 @@ input:focus:required:invalid {
   background-image: url(../images/next-link.webp);
   background-repeat: no-repeat;
   background-position: right center;
-}
-
-.services__right-link:hover {
-  text-decoration: underline;
+  cursor: pointer;
 }
 
 .services .slick-arrow {
@@ -2962,13 +3098,6 @@ input:focus:required:invalid {
   transition: 0.3s;
 }
 
-.services .slick-arrow.slick-prev:hover {
-  -webkit-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  transform: rotate(180deg);
-  background-image: url(../images/next.webp);
-}
-
 .services .slick-arrow.slick-prev {
   left: 0;
   background-image: url(../images/prev.webp);
@@ -2984,13 +3113,6 @@ input:focus:required:invalid {
   background-image: url(../images/prev.webp);
   background-repeat: no-repeat;
   background-position: center;
-}
-
-.services .slick-arrow.slick-next:hover {
-  -webkit-transform: none;
-  -ms-transform: none;
-  transform: none;
-  background-image: url(../images/next.webp);
 }
 
 .swiper-button-next:after,
@@ -3054,7 +3176,7 @@ input:focus:required:invalid {
   flex: 0 1 50%;
 }
 
-.questions__title {
+.questions .questions__title {
   margin-top: 70px;
   margin-bottom: 40px;
   max-width: none;
@@ -3135,11 +3257,6 @@ input:focus:required:invalid {
   cursor: pointer;
 }
 
-.questions__tab-title:hover {
-  -webkit-box-shadow: 0 0 10px 2px rgba(201, 201, 201, 0.62);
-  box-shadow: 0 0 10px 2px rgba(201, 201, 201, 0.62);
-}
-
 .questions__tab-title::after {
   margin-top: -10px;
   -webkit-transform: rotate(-90deg);
@@ -3165,6 +3282,10 @@ input:focus:required:invalid {
   margin-top: 20px;
 }
 
+.personal-data__wrap span {
+  font-size: 15px;
+}
+
 .personal-data__wrap label a {
   color: rgb(0, 0, 238);
 }
@@ -3181,6 +3302,7 @@ input:focus:required:invalid {
 .seo_block ul,
 .seo_block ul li {
   list-style-type: disc;
+  font-size: 15px;
 }
 
 .seo_block,
@@ -3216,9 +3338,1277 @@ input:focus:required:invalid {
   font-size: 15px;
 }
 
-@media (max-width: 1280px) {
+@media (min-width: 1000px) {
+  .calc__step3-link:hover {
+    text-decoration: underline;
+  }
+
+  .main-btn:hover {
+    background-position: 98% center;
+  }
+
+  .options__btn:hover {
+    background-color: #fbca5f;
+  }
+
+  .options .slick-arrow:hover {
+    right: -5px !important;
+  }
+
+  .options .slick-arrow.slick-prev:hover {
+    left: -5px !important;
+  }
+
+  .options__card-content:hover {
+    background-color: #fff;
+  }
+
+  .options .slick-arrow.slick-prev:hover {
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+    background-image: url(../images/next.webp);
+  }
+
+  .webp .options .slick-arrow.slick-next:hover {
+    background-image: url(../images/next.webp);
+  }
+
+  .webp .options .slick-arrow.slick-prev:hover {
+    background-image: url(../images/next.webp);
+  }
+
+  .options .slick-arrow.slick-next:hover {
+    -webkit-transform: none;
+    -ms-transform: none;
+    transform: none;
+    background-image: url(../images/next.webp);
+  }
+
+  .order__btn:hover {
+    background-color: #000 !important;
+  }
+
+  .services__link:hover {
+    color: #ffb900;
+  }
+
+  .services__right-link:hover {
+    text-decoration: underline;
+  }
+
+  .services .slick-arrow.slick-prev:hover {
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+    background-image: url(../images/next.webp);
+  }
+
+  .services .slick-arrow.slick-next:hover {
+    -webkit-transform: none;
+    -ms-transform: none;
+    transform: none;
+    background-image: url(../images/next.webp);
+  }
+
+  .questions__tab-title:hover {
+    -webkit-box-shadow: 0 0 10px 2px rgba(201, 201, 201, 0.62);
+    box-shadow: 0 0 10px 2px rgba(201, 201, 201, 0.62);
+  }
+}
+
+@media screen and (max-width: 1280px) {
   .slider-soft {
     width: 100%;
+  }
+
+  .info__wrapper {
+    margin: 30px 0 50px 0;
+  }
+
+  .info__img-bl {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+
+  .info__wrapper {
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+
+  .info__card {
+    margin-top: 30px;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 50%;
+    flex: 0 0 50%;
+  }
+}
+
+@media screen and (max-width: 1271px) {
+  .calc__step2-comment {
+    max-width: 492px;
+  }
+
+  .calc__imgBl {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 30%;
+    flex: 0 0 30%;
+    max-width: 400px;
+  }
+}
+
+@media screen and (max-width: 1255px) {
+  .header_fixed .header__item:not(:last-child) {
+    margin-right: 20px;
+  }
+}
+
+@media screen and (max-width: 1180px) {
+  .header__item {
+    height: 100%;
+  }
+
+  .header__item:not(:last-child) {
+    margin-right: 35px;
+  }
+
+  .header__logo {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1156px) {
+  .calc__cost {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 100%;
+    flex: 0 0 100%;
+  }
+
+  .calc__imgBl {
+    display: none;
+  }
+
+  .calc__step2 .calc__inp-wrapp {
+    max-width: unset;
+  }
+
+  .calc__step2.calcActive {
+    align-items: flex-start;
+  }
+}
+
+@media screen and (max-width: 1100px) {
+  .header__item {
+    height: 100%;
+  }
+
+  .header__item:not(:last-child) {
+    margin-right: 25px;
+  }
+}
+
+@media screen and (max-width: 1092px) {
+  .slick-dots {
+    left: 15px;
+    bottom: 150px;
+  }
+
+  .slick-dots {
+    left: 15px;
+  }
+
+  .services__right-wrap {
+    max-width: none;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .calc__step2.calcActive {
+    align-items: center;
+  }
+
+  .header__top-wrapper {
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+  }
+
+  .header__soc {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 100%;
+    flex: 0 0 100%;
+  }
+
+  .header__numbers {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+  }
+
+  .header__numbers-tel:first-of-type {
+    margin: 0 20px 0 0;
+  }
+
+  .header__city-list {
+    margin: 0 auto 0 0;
+  }
+
+  .header__city-block {
+    margin: 0 auto 0 0;
+  }
+
+  .header__dropdown {
+    width: 80%;
+  }
+
+  .slider-item__title {
+    font-size: 50px;
+  }
+
+  .slider-item__wrapper {
+    margin-top: 50px;
+  }
+
+  .calc__form {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+
+  .calc__check-wrap {
+    margin: 0 auto;
+  }
+
+  .calc__step3-wrapper {
+    margin: 0 auto;
+  }
+
+  .calc__check-wrap {
+    margin: 0 auto;
+  }
+
+  .calc__check-wrap {
+    text-align: center;
+  }
+
+  .calc__check-wrap {
+    margin: 30px auto 40px auto;
+  }
+
+  .calc__cost-title {
+    display: inline-block;
+  }
+
+  .calc__cost {
+    text-align: center;
+  }
+
+  .trust__card {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 100%;
+    flex: 0 1 100%;
+  }
+
+  .trust__card-imgBl {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 20%;
+    flex: 0 0 20%;
+  }
+
+  .services__content {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .services .slick-arrow {
+    top: 13%;
+  }
+
+  .services__right-wrap {
+    max-width: 50%;
+  }
+
+  .services__column-right {
+    margin-top: 20px;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 100%;
+    flex: 0 1 100%;
+  }
+
+  .services__column-left {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 100%;
+    flex: 0 1 100%;
+  }
+
+  .questions__wrapper {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .questions__right-wrapper {
+    margin-top: 30px;
+  }
+
+  .main-content__title {
+    font-size: 35px;
+  }
+
+  .content__top-img {
+    width: 100%;
+  }
+
+  .content {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 100%;
+    flex: 0 1 100%;
+    margin: 0;
+  }
+
+  .aside {
+    margin-bottom: 30px;
+  }
+
+  .main-content__wrapper {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .content__rates-wrapper {
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+
+  .content__rates-card {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 50%;
+    flex: 0 1 50%;
+  }
+
+  .footer__wrapper {
+    margin-top: 50px;
+  }
+
+  .footer__column-list {
+    max-width: none;
+  }
+
+  .footer__column {
+    text-align: center;
+    margin-top: 20px;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 50%;
+    flex: 0 1 50%;
+  }
+}
+
+@media screen and (max-width: 885px) {
+  .header__item:not(:last-child) {
+    margin-right: 15px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .hidden {
+    z-index: 100;
+    top: -5px;
+    left: -5px;
+    bottom: -5px;
+    right: -5px;
+    position: absolute;
+  }
+
+  .promo-swiper .swiper-pagination {
+    justify-content: center;
+    bottom: 12%;
+  }
+
+  .hidden.active {
+    display: none;
+  }
+
+  .header__number-listWrapp::after {
+    top: 14px;
+    right: 0;
+  }
+
+  .header__number-listWrapp::after {
+    width: 40px;
+    height: 22px;
+  }
+
+  .promo-swiper .swiper-slide {
+    background-blend-mode: multiply;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .slider-soft {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+
+  .slick-dots {
+    left: 15px;
+    bottom: 150px;
+  }
+
+  .slider-item__title {
+    max-width: 80%;
+    font-size: 35px;
+  }
+
+  .slider-item__subtitle {
+    font-size: 19px;
+  }
+
+  .slider-item__wrapper {
+    min-height: 400px;
+  }
+
+  .info__card {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 100%;
+    flex: 0 0 100%;
+  }
+
+  .info__text {
+    max-width: unset;
+  }
+
+  .calc__cost-title {
+    font-size: 30px;
+  }
+
+  .calc__step3-text {
+    font-size: 18px;
+  }
+
+  .calc__step3-list {
+    text-align: left;
+  }
+
+  .trust__card-img {
+    width: 100%;
+  }
+
+  .calc__wrapper {
+    margin-bottom: 40px;
+  }
+
+  .questions .title-block,
+  .services .title-block,
+  .options .title-block,
+  .trust .title-block {
+    font-size: 22px;
+  }
+
+  .trust__wrapper {
+    margin: 50px 0 20px 0;
+  }
+
+  .trust__card-imgBl {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 155px;
+    flex: 0 0 155px;
+  }
+
+  .options__price-item1 {
+    font-size: 18px;
+  }
+
+  .options__price-item2 {
+    font-size: 30px;
+  }
+
+  .options__price-item3 {
+    font-size: 20px;
+  }
+
+  .order__wrapper {
+    text-align: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+
+  .order__title {
+    margin: 20px 0 10px 0;
+    font-size: 35px;
+    max-width: none;
+  }
+
+  .order__subtitle {
+    max-width: 90%;
+  }
+
+  .services__left-subtitle {
+    max-width: none;
+  }
+
+  .services__numbers-text {
+    margin: 0 auto;
+  }
+
+  .services__content {
+    text-align: center;
+  }
+
+  .services__right-list {
+    margin-right: 20px;
+  }
+
+  .services__right-wrap {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    max-width: none;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .content__examples .slick-arrow {
+    top: 0;
+  }
+
+  .content__top-subtitle {
+    text-align: center;
+  }
+
+  .main-content .main-content__title {
+    font-size: 25px;
+  }
+
+  .content__numbers-wrapper {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+
+  .content__rates-card {
+    text-align: center;
+    margin-top: 20px;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 100%;
+    flex: 0 1 100%;
+  }
+
+  .send__form-btn {
+    margin: 20px 0 20px 0 !important;
+  }
+
+  .send__title {
+    max-width: none;
+  }
+
+  .send__subtitle {
+    max-width: none;
+  }
+
+  .send__form :nth-child(3) {
+    margin-top: 20px;
+    display: block;
+  }
+
+  .footer__column:not(:last-child) {
+    border-right: none;
+  }
+
+  .footer__wrapper {
+    margin-top: 20px;
+    margin-bottom: 30px;
+  }
+
+  .slider-item__arrow {
+    display: block;
+    bottom: -15px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    text-align: center;
+  }
+  .calc__step1 .calc__step1-btn {
+    max-width: 100%;
+  }
+  .calc__step1-btn {
+    max-width: 205px;
+  }
+  .calc__step2-btn {
+    max-width: 205px;
+  }
+  .calc__inp-wrap-wrap {
+    display: block;
+  }
+  .calc-inp {
+    max-height: 61px !important;
+  }
+  .slick-dots li button {
+    background: #fff;
+  }
+  .wrapper {
+    padding-top: 93px;
+  }
+
+  .calc__inp-wrapp {
+    width: 100%;
+    height: auto;
+  }
+
+  .info .info__wrapper .info__card p {
+    font-size: 15px;
+  }
+
+  .article__wrap {
+    grid-template-columns: repeat(1, 1fr);
+    grid-column-gap: 0;
+    grid-row-gap: 40px;
+  }
+  .article-item__title {
+    font-size: 16px;
+  }
+  .article-item__preview {
+    font-size: 14px;
+  }
+  .article-item__btn {
+    font-size: 14px;
+    padding: 8px 20px;
+  }
+}
+
+@media screen and (max-width: 758px) {
+  .options .options__title {
+    max-width: none;
+    text-align: center;
+    margin: 30px 0 50px 0;
+    font-size: 22px;
+  }
+}
+
+@media screen and (max-width: 688px) {
+  .calc__inp-wrap-wrap {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .calc__inp-wrap-wrap :first-child {
+    margin-right: 0;
+  }
+
+  .calc__step2 .calc__inp-wrapp {
+    max-width: none;
+    height: unset;
+  }
+
+  .calc__step2-comment {
+    max-width: none;
+  }
+
+  .calc-inp {
+    width: 100%;
+    max-width: none !important;
+  }
+}
+
+@media screen and (max-width: 674px) {
+  .questions__tab {
+    text-align: center;
+    width: 100%;
+  }
+
+  .questions__accardeon {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+
+  .questions__column-right {
+    margin-top: 20px;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 100%;
+    flex: 0 0 100%;
+  }
+
+  .questions__right-wrapper {
+    max-width: none;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .options__card {
+    margin: 50px;
+  }
+}
+
+@media screen and (max-width: 620px) {
+  .slider-item__btn {
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .calc-btns {
+    display: flex;
+  }
+}
+
+@media screen and (max-width: 618px) {
+  .calc__form {
+    -webkit-box-align: start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+  }
+
+  .calc__step2-comment {
+    margin: 20px 0 0 0 !important;
+    min-width: 0 !important;
+  }
+
+  .calc__step2 {
+    width: 100%;
+  }
+
+  .calc__step1 {
+    width: 100%;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 100%;
+    flex: 0 1 100%;
+  }
+
+  .calc__step2-inp {
+    width: 100%;
+  }
+
+  .calc__step2-inp {
+    -webkit-box-align: start !important;
+    -ms-flex-align: start !important;
+    align-items: flex-start !important;
+  }
+
+  .calc__inp-wrapp {
+    max-width: none !important;
+  }
+
+  .calc__inp-wrap-wrap {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .calc__step2-comment {
+    margin: 15px auto 0 auto;
+    min-width: 0 !important;
+  }
+
+  .calc-inp {
+    margin: 15px 0 0 0 !important;
+  }
+
+  .main-btn {
+    display: block;
+    margin: 0 auto 10px auto;
+    font-size: 15px;
+  }
+}
+
+@media screen and (max-width: 610px) {
+  .content__examples-card {
+    text-align: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+}
+
+@media screen and (max-width: 604px) {
+  .questions__form-btn {
+    margin-top: 20px;
+  }
+}
+
+@media screen and (max-width: 580px) {
+  .footer__column {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 100%;
+    flex: 0 1 100%;
+  }
+
+  .header__number-list {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 564px) {
+  .calc__step3-subtext {
+    margin-top: 10px;
+  }
+
+  .calc__step3-text {
+    max-width: none;
+  }
+
+  .calc__step3-subtext {
+    font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 552px) {
+  .header__soc {
+    display: none;
+  }
+
+  .header__numbers {
+    margin: 0 auto;
+  }
+
+  .header__city-list {
+    margin: 0 auto;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .calc-btns {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .calc__step1-btn,
+  .calc__step2-btn {
+    max-width: unset;
+    width: 100%;
+  }
+
+  .calc-btns .main-btn {
+    margin: 0 0 10px 0;
+  }
+
+  .services__right-list {
+    margin-right: unset;
+  }
+
+  .menu-bottom-tel {
+    text-align: center;
+    margin: 20px 0 !important;
+    display: block;
+  }
+
+  .slider-item__arrow {
+    bottom: 60px;
+  }
+
+  .options__wrapper {
+    padding: 0 23px;
+  }
+
+  .btn-wrap-menu {
+    text-align: center;
+    margin: 0 auto 30px auto;
+    max-width: 80%;
+    display: block !important;
+  }
+
+  .header__menu-bottom {
+    border-top: 1px solid #979797;
+    width: 100%;
+    display: block;
+  }
+
+  .header__number-list {
+    display: none;
+  }
+
+  .header__item {
+    margin: 0 !important;
+  }
+
+  .header__number-listWrapp {
+    font-size: 15px;
+  }
+
+  .header__logo {
+    width: 50%;
+    display: block;
+  }
+
+  .header__btn {
+    display: none;
+  }
+
+  .header__number-list {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+
+  .header__city-block {
+    margin: 0 auto;
+  }
+
+  .slider-soft {
+    bottom: 177px;
+  }
+
+  .slider-item__wrapper {
+    padding-bottom: 200px;
+  }
+
+  .slider-item__btn {
+    max-width: none;
+  }
+
+  .slider-item__wrapper {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+
+  .slider-item__subtitle,
+  .slider-item__title {
+    text-align: center;
+    max-width: none;
+  }
+
+  .slider-item__btn {
+    display: block;
+    font-size: 16px;
+    padding: 12px 40px 12px 20px;
+  }
+
+  .slick-dots {
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+
+  .slider-item__wrapper {
+    min-height: 350px;
+  }
+
+  .info__wrapper {
+    margin: 30px 0 50px 0;
+  }
+
+  .calc__step1 {
+    width: 100%;
+  }
+
+  .calc__inp-wrapp {
+    margin: 0 auto;
+    width: 10;
+  }
+
+  .calc__step1-btn {
+    margin-top: 20px;
+  }
+
+  .calc__inp-wrap-wrap {
+    width: 100%;
+  }
+
+  .calc__step1-inp {
+    max-width: none;
+    width: 100%;
+  }
+
+  .calc__check-wrap {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+
+  .calc__check:not(:first-child) {
+    margin-left: 40px;
+  }
+
+  .calc__check:not(:first-child)::after {
+    width: 25px;
+    left: -32px;
+  }
+
+  .calc__cost-title {
+    font-size: 25px;
+  }
+
+  .trust__wrapper {
+    margin-bottom: 0;
+  }
+
+  .trust__card {
+    margin: 0;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+
+  .trust .title-block {
+    text-align: center;
+    max-width: none;
+    font-size: 18px;
+  }
+
+  .trust__card-content {
+    text-align: center;
+  }
+
+  .trust__card-img {
+    height: auto;
+  }
+
+  .trust__card-imgBl {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 30%;
+    flex: 0 0 30%;
+    margin: 0 0 20px 0;
+  }
+
+  .trust__card-title {
+    font-size: 16px;
+  }
+
+  .trust__card-subtitle {
+    max-width: none;
+  }
+
+  .order__title {
+    font-size: 25px;
+  }
+
+  .order__subtitle {
+    font-size: 18px;
+  }
+
+  .services__right-link {
+    font-size: 15px;
+  }
+
+  .services__link {
+    text-align: center;
+    font-size: 16px;
+  }
+
+  .services__right-title {
+    font-size: 25px;
+    margin-bottom: 20px;
+  }
+
+  .services__numbers-card {
+    margin-top: 20px;
+  }
+
+  .services__left-numbers {
+    margin-top: 20px;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .services__right-wrap {
+    text-align: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .services__link {
+    border-radius: 10px;
+    margin-top: -10px;
+    display: inline-block;
+    width: 100%;
+    background-color: rgba(240, 240, 240, 0.856);
+    position: relative;
+    padding: 0;
+  }
+
+  .questions__form-inp {
+    padding: 15px 10px;
+  }
+
+  .questions__column-right {
+    margin-top: 20px;
+  }
+
+  .questions__title {
+    margin-top: 20px;
+  }
+
+  .questions__tab-content {
+    padding-left: 50px;
+  }
+
+  .questions__right-wrapper {
+    border: none;
+    padding: 0 10px;
+  }
+
+  .questions__right-wrapper {
+    text-align: center;
+  }
+
+  .questions__right-title {
+    margin-top: 15px;
+  }
+
+  .questions__tab-title {
+    padding-left: 50px;
+  }
+
+  .questions__tab-title::after {
+    left: 10px;
+  }
+
+  .content__examples .slick-arrow {
+    top: -5px;
+  }
+
+  .services .title-block,
+  .options .title-block {
+    max-width: none;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .services .slick-arrow {
+    top: 8%;
+  }
+
+  .content .title-block {
+    font-size: 18px;
+    text-align: left;
+  }
+
+  .content__examples .title-block {
+    font-size: 16px;
+  }
+
+  .send__subtitle {
+    margin-top: 20px;
+    font-size: 17px;
+  }
+
+  .send__title {
+    font-size: 25px;
+  }
+
+  .content__examples {
+    margin-bottom: 20px;
+  }
+
+  .send__form {
+    margin: 0;
+  }
+
+  .send__wrapper {
+    text-align: center;
+  }
+
+  .send__form-inp {
+    max-width: none;
+    display: inline-block !important;
+    margin: 20px 0 0 0;
+  }
+
+  .send__form-btn {
+    margin: 20px auto 20px auto !important;
+  }
+
+  .promo-swiper .swiper-pagination {
+    bottom: 25%;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .info__text {
+    font-size: 17px;
+  }
+}
+
+@media screen and (max-width: 380px) {
+  .header__numbers-tel {
+    font-size: 16px;
+  }
+
+  .header__btn {
+    padding: 15px 20px;
+  }
+
+  .services .slick-arrow {
+    top: 7%;
+  }
+}
+
+@media screen and (max-width: 340px) {
+  .services .slick-arrow {
+    top: 6%;
+  }
+
+  .main-btn {
+    font-size: 14px;
   }
 }
 </style>

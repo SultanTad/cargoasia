@@ -1,221 +1,141 @@
+<script setup>
+import { ref, onMounted, reactive } from "vue";
+
+import ModalCities from "./ModalCities.vue";
+import ModalForm from "./ModalForm.vue";
+import ModalSuccess from "./ModalSuccess.vue";
+
+const headerFixed = ref(false);
+const burgerActive = ref(false);
+const burgerBtnActive = ref(false);
+const activeCity = ref(false);
+const modalForm = ref(false);
+const modalSuccess = ref(false);
+
+const scrollHeaderFixed = () => {
+  let windowCenter = window.pageYOffset || document.documentElement.scrollTop;
+  windowCenter >= 145
+    ? (headerFixed.value = true)
+    : (headerFixed.value = false);
+};
+
+const formQuestions = reactive({
+  name: "",
+  phone: "",
+  email: "",
+  question: "",
+});
+
+const errors = reactive({
+  name: false,
+  phone: false,
+  email: false,
+  question: false,
+});
+
+const titleModalForm = reactive([{ title: "Заполните форму" }]);
+
+const btnModalForm = reactive([{ btn: "Отправить" }]);
+
+const validEmail = (email) => {
+  let res =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return res.test(email);
+};
+
+const validatePhone = (phone) => {
+  const phoneRegex = /^(?:[0-9] ?){6,14}[0-9]$/;
+  return phoneRegex.test(phone);
+};
+
+const validateFormQuestions = () => {
+  if (formQuestions.name.length === 0) {
+    errors.name = true;
+  } else {
+    errors.name = false;
+  }
+
+  if (!validatePhone(formQuestions.phone)) {
+    errors.phone = true;
+  } else {
+    errors.phone = false;
+  }
+
+  if (formQuestions.question.length === 0) {
+    errors.question = true;
+  } else {
+    errors.question = false;
+  }
+
+  if (
+    errors.name == false &&
+    errors.phone == false &&
+    errors.question == false
+  ) {
+    modalSuccess.value = true;
+    modalForm.value = false;
+    document.body.style.overflow = "hidden";
+  }
+};
+
+const burgerToggle = () => {
+  burgerActive.value = !burgerActive.value;
+  burgerBtnActive.value = !burgerBtnActive.value;
+  if (burgerActive.value) {
+    document.body.style.overflow = "hidden";
+  } else if (!burgerActive.value) {
+    document.body.style.overflow = "inherit";
+  }
+};
+
+const switchOffBurger = () => {
+  burgerActive.value = false;
+  burgerBtnActive.value = false;
+  document.body.style.overflow = "inherit";
+};
+
+const activeCityModal = () => {
+  activeCity.value = true;
+  document.body.style.overflow = "hidden";
+};
+
+const deactiveCityModal = () => {
+  activeCity.value = false;
+  document.body.style.overflow = "inherit";
+};
+
+const activeModalForm = () => {
+  modalForm.value = true;
+  document.body.style.overflow = "hidden";
+};
+
+const deactiveModalForm = () => {
+  modalForm.value = false;
+  document.body.style.overflow = "inherit";
+};
+
+const deactiveModalSuccess = () => {
+  modalSuccess.value = false;
+  document.body.style.overflow = "inherit";
+};
+
+onMounted(() => window.addEventListener("scroll", scrollHeaderFixed));
+</script>
 <template>
   <header class="header">
     <div class="header__top">
       <div class="container">
         <div class="header__top-wrapper">
           <div class="header__city-block">
-            <span class="header__city-prev">г. Москва</span>
-            <div class="header__city">
-              <div class="header__city-content">
-                <!-- <ul class="header__city-list" style="columns: 5">
-                  <li class="header__city-item">
-                    <a href="/spb/">Санкт-Петербург</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/nsk/">Новосибирск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/chelyabinsk/">Челябинск</a>
-                  </li>
-                  <li class="header__city-item"><a href="/omsk/">Омск</a></li>
-                  <li class="header__city-item">
-                    <a href="/samara/">Самара</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/rnd/">Ростов-на-Дону</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/krasnoyarsk/">Красноярск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/volgograd/">Волгоград</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/ekb/">Екатеринбург</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/nn/">Нижний Новгород</a>
-                  </li>
-                  <li class="header__city-item"><a href="/kzn/">Казань</a></li>
-                  <li class="header__city-item"><a href="/irk/">Иркутск</a></li>
-                  <li class="header__city-item">
-                    <a href="/Cheboksary/">Чебоксары</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Balashikha/">Балашиха</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Kaliningrad/">Калининград</a>
-                  </li>
-                  <li class="header__city-item"><a href="/Tula/">Тула</a></li>
-                  <li class="header__city-item"><a href="/Kursk/">Курск</a></li>
-                  <li class="header__city-item">
-                    <a href="/Sevastopol/">Севастополь</a>
-                  </li>
-                  <li class="header__city-item"><a href="/Sochi/">Сочи</a></li>
-                  <li class="header__city-item"><a href="//">Ставрополь</a></li>
-                  <li class="header__city-item">
-                    <a href="/Ulan-Ude/">Улан-Удэ</a>
-                  </li>
-                  <li class="header__city-item"><a href="/Tver/">Тверь</a></li>
-                  <li class="header__city-item">
-                    <a href="/Magnitogorsk/">Магнитогорск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Ivanovo/">Иваново</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Bryansk/">Брянск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Belgorod/">Белгород</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/surgut/">Сургут</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Vladimir/">Владимир</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/nizhniy-tagil/">Нижний Тагил</a>
-                  </li>
-                  <li class="header__city-item"><a href="/Chita/">Чита</a></li>
-                  <li class="header__city-item">
-                    <a href="/Arkhangelsk/">Архангельск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Simferopol/">Симферополь</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Kaluga/">Калуга</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Smolensk/">Смоленск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Volzhsky/">Волжский</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Yakutsk/">Якутск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Saransk/">Саранск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Cherepovets/">Череповец</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Kurgan/">Курган</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Vologda/">Вологда</a>
-                  </li>
-                  <li class="header__city-item"><a href="//">Орел</a></li>
-                  <li class="header__city-item">
-                    <a href="/Vladikavkaz/">Владикавказ</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Podolsk/">Подольск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Grozny/">Грозный</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Murmansk/">Мурманск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Tambov/">Тамбов</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Petrozavodsk/">Петрозаводск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/Sterlitamak/">Стерлитамак</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/nizhnevartovsk/">Нижневартовск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/kostroma/">Кострома</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/novorossiysk/">Новороссийск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/yoshkar-Ola/">Йошкар-Ола</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/khimki/">Химки</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/krasnodar/">Краснодар</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/tyumen/">Тюмень</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/tolyatti/">Тольятти</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/izhevsk/">Ижевск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/barnaul/">Барнаул</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/ulyanovsk/">Ульяновск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/khabarovsk/">Хабаровск</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/yaroslavl/">Ярославль</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/vladivostok/">Владивосток</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/makhachkala/">Махачкала</a>
-                  </li>
-                  <li class="header__city-item"><a href="/tomsk/">Томск</a></li>
-                  <li class="header__city-item">
-                    <a href="/orenburg/">Оренбург</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/kemerovo/">Кемерово</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/novokuznetsk/">Новокузнецк</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/ryazan/">Рязань</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/astrakhan/">Астрахань</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/naberezhnye-chelny/">Набережные-Челны</a>
-                  </li>
-                  <li class="header__city-item"><a href="/penza/">Пенза</a></li>
-                  <li class="header__city-item"><a href="/kirov/">Киров</a></li>
-                  <li class="header__city-item">
-                    <a href="/lipetsk/">Липецк</a>
-                  </li>
-                  <li class="header__city-item">
-                    <a href="/saratov/">Саратов</a>
-                  </li>
-                  <li class="header__city-item"><a href="/msk/">Москва</a></li>
-                </ul> -->
-                <div class="header__city-close"></div>
-              </div>
-            </div>
+            <span class="header__city-prev" @click="activeCityModal"
+              >г. Москва</span
+            >
+            <ModalCities v-if="activeCity" @close="deactiveCityModal" />
           </div>
           <div class="header__numbers">
             <a href="tel:88047004223" class="header__numbers-tel"
               ><picture
-                ><source
-                  srcset="/images/tel-russia.webp"
-                  type="image/webp" />
+                ><source srcset="/images/tel-russia.webp" type="image/webp" />
                 <img
                   src="/images/tel-russia.webp"
                   alt="Russia"
@@ -224,9 +144,7 @@
             >
             <a href="tel:+8617800696877" class="header__numbers-tel"
               ><picture
-                ><source
-                  srcset="/images/tel-china.webp"
-                  type="image/webp" />
+                ><source srcset="/images/tel-china.webp" type="image/webp" />
                 <img
                   src="/images/tel-china.webp"
                   alt="China"
@@ -255,9 +173,7 @@
             <!--<a href="https://api.whatsapp.com/send?phone=79645468368" class="header__soc-link"><picture><source srcset="/bitrix/templates/car/img/soc-watssup.webp" type="image/webp"><img src="/bitrix/templates/car/img/soc-watssup.webp" alt="Whatssup" class="header__soc-ico"></picture></a>-->
             <a href="https://t.me/cargoasiabot" class="header__soc-link"
               ><picture
-                ><source
-                  srcset="/images/soc-telegram.webp"
-                  type="image/webp" />
+                ><source srcset="/images/soc-telegram.webp" type="image/webp" />
                 <img
                   src="/images/soc-telegram.webp"
                   alt="Telegram"
@@ -265,9 +181,7 @@
             ></a>
             <a href="https://vk.com/club198703643" class="header__soc-link"
               ><picture
-                ><source
-                  srcset="/images/soc-vk.webp"
-                  type="image/webp" />
+                ><source srcset="/images/soc-vk.webp" type="image/webp" />
                 <img
                   src="/images/soc-vk.webp"
                   alt="Vk"
@@ -277,29 +191,25 @@
         </div>
       </div>
     </div>
-    <div class="header__content">
+    <div class="header__content" :class="{ header_fixed: headerFixed }">
       <div class="container">
         <div class="header__content-wrapper">
           <div class="header__logo">
-            <a href="/msk/"
+            <router-link :to="{ name: 'Home' }"
               ><picture
-                ><source
-                  srcset="/images/logo.webp"
-                  type="image/webp" />
+                ><source srcset="/images/logo.webp" type="image/webp" />
                 <img
                   src="/images/logo.webp"
                   title="Азия Карго | Карго Китай"
                   alt="Азия Карго | Карго Китай"
                   class="header__logo-img" /></picture
-            ></a>
+            ></router-link>
           </div>
           <div class="header__number-list">
             <div class="header__number-listWrapp">
               <a href="tel:88047004223" class="header__number-item"
                 ><picture
-                  ><source
-                    srcset="/images/tel-russia.webp"
-                    type="image/webp" />
+                  ><source srcset="/images/tel-russia.webp" type="image/webp" />
                   <img
                     src="/images/tel-russia.webp"
                     alt="Russia"
@@ -310,9 +220,7 @@
                 href="tel:+8617800696877"
                 class="header__number-item number-item-active"
                 ><picture
-                  ><source
-                    srcset="/images/tel-china.webp"
-                    type="image/webp" />
+                  ><source srcset="/images/tel-china.webp" type="image/webp" />
                   <img
                     src="/images/tel-china.webp"
                     alt="China"
@@ -322,13 +230,14 @@
             </div>
             <div class="hidden"></div>
           </div>
-          <nav class="header__nav">
+          <nav class="header__nav" :class="{ nav_active: burgerActive }">
             <ul class="header__list">
               <li class="header__item">
-                <a
-                  href="/msk/gruzoperevozki/"
+                <router-link
+                  :to="{ name: 'CargoTransportation' }"
+                  @click="switchOffBurger"
                   class="header__nav-link active nav-link-tap gruz_click"
-                  >Грузоперевозка</a
+                  >Грузоперевозка</router-link
                 >
                 <ul class="header__dropdown">
                   <ul class="header__dropdown1">
@@ -339,10 +248,10 @@
                     </li>
 
                     <li class="header__dropdown-item">
-                      <a
-                        href="/msk/gruzoperevozki/dostavka-iz-guanchzhou/"
+                      <router-link
+                        :to="{ name: 'DeliveryFromCities' }"
                         class="header__dropdown-link"
-                        >Доставка из Гуанчжоу</a
+                        >Доставка из Гуанчжоу</router-link
                       >
                     </li>
 
@@ -388,11 +297,21 @@
               </li>
 
               <li class="header__item">
-                <a href="/msk/services/" class="header__nav-link">Услуги</a>
+                <router-link
+                  :to="{ name: 'Services' }"
+                  @click="switchOffBurger"
+                  class="header__nav-link"
+                  >Услуги</router-link
+                >
               </li>
 
               <li class="header__item">
-                <a href="/msk/about/" class="header__nav-link">О компании</a>
+                <router-link
+                  :to="{ name: 'AboutCompany' }"
+                  @click="switchOffBurger"
+                  class="header__nav-link"
+                  >О компании</router-link
+                >
               </li>
 
               <li class="header__item">
@@ -400,7 +319,7 @@
               </li>
 
               <li class="header__item">
-                <a href="/msk/contacts/" class="header__nav-link">Контакты</a>
+                <router-link :to="{name: 'Contacts'}" class="header__nav-link">Контакты</router-link>
               </li>
             </ul>
 
@@ -433,15 +352,15 @@
                   >+86 17800696877</a
                 >
               </div>
-              <div class="header__btn-wrap btn-wrap-menu">
-                <a href="#" class="header__btn btn-wrap-menu"
-                  >Заказать звонок</a
+              <div @click="activeModalForm" class="header__btn-wrap btn-wrap-menu">
+                <div class="header__btn btn-wrap-menu"
+                  >Заказать звонок</div
                 >
               </div>
             </div>
           </nav>
-          <div class="header__btn-wrap">
-            <a href="#" class="header__btn">Заказать звонок</a>
+          <div @click="activeModalForm" class="header__btn-wrap">
+            <div class="header__btn">Заказать звонок</div>
           </div>
           <div class="header-bottom__cab">
             <a rel="nofollow" href="https://lk.cargoasia.info/profile/">
@@ -457,32 +376,64 @@
               </div>
             </a>
           </div>
-          <div class="header__burger"><span></span></div>
+          <div
+            class="header__burger"
+            :class="{ burger_active: burgerBtnActive }"
+            @click="burgerToggle"
+          >
+            <span></span>
+          </div>
         </div>
       </div>
-
-      <!-- <div class="popup">
-      <div class="popup__overlay">
-        <div class="popup__content">
-          <h3 class="popup__title">Заполните форму</h3>
-          <p class="popup__subtitle">Оставьте заявку нам менеджер ответит вам в ближайшее время</p>
-          <form action="#" class="popup__form" novalidate>
-            <input type="text" required placeholder="Имя" class="popup__inp" name="name">
-            <input type="tel" required placeholder="Телефон" class="popup__inp" name="phone">
-            <textarea rows="4" placeholder="Коментарии" class="popup__inp" name="comment"></textarea>
-            <div class="popup__wrap">
-              <button class="popup__btn main-btn">Отправить</button><span class="popup__varning">введите имя</span>
-            </div>
-          </form>
-          <div class="popup__close"></div>
-        </div>
-      </div>
-    </div> -->
     </div>
   </header>
+  <ModalForm
+    @validateBtn="validateFormQuestions"
+    v-if="modalForm"
+    @close="deactiveModalForm"
+    :titleModalForm="titleModalForm"
+    :btnModalForm="btnModalForm"
+  >
+    <template #modal-form>
+      <input type="text" value="" style="display: none" />
+      <input
+        type="text"
+        required=""
+        class="questions__form-inp"
+        :class="{ err: errors.name }"
+        placeholder="Имя"
+        v-model="formQuestions.name"
+        @input="errors.name = false"
+      />
+      <input
+        type="tel"
+        data-rule="tel"
+        required=""
+        class="questions__form-inp"
+        :class="{ err: errors.phone }"
+        placeholder="Телефон"
+        v-model="formQuestions.phone"
+        @input="errors.phone = false"
+      />
+      <textarea
+        class="questions__form-inp"
+        :class="{ err: errors.question }"
+        rows="4"
+        placeholder="Комментарии"
+        v-model="formQuestions.question"
+        @input="errors.question = false"
+      ></textarea>
+    </template>
+  </ModalForm>
+  <ModalSuccess v-if="modalSuccess" @close="deactiveModalSuccess" />
 </template>
 
 <style>
+
+.header__btn-wrap {
+  cursor: pointer;
+}
+
 .header__top {
   font-size: 15px;
   background-color: #f4f4f4;
@@ -552,15 +503,20 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  margin-top: 65.5px;
 }
 
 .header__item {
-  height: 100%;
+  height: 92.8px;
+  display: flex;
+  align-items: center;
 }
 
 .header__item:not(:last-child) {
   margin-right: 55px;
+}
+
+.header_fixed .header__item:not(:last-child) {
+  margin-right: 40px;
 }
 
 .header__dropdown {
@@ -727,21 +683,19 @@
   -webkit-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   transform: rotate(180deg);
-  top: 14px;
+  top: 20px;
   right: 10px;
-  background-image: url(../img/number-arrov.webp);
+  background-image: url(../images/number-arrov.webp);
   background-repeat: no-repeat;
   background-position: center;
 }
 
 .header__number-listWrapp {
-  padding-top: 10px;
-  padding-left: 10px;
   -webkit-transition: 0.3s;
   -o-transition: 0.3s;
   transition: 0.3s;
   border-radius: 10px;
-  padding: 15 20px;
+  padding: 15px 20px;
   background-color: #fff;
   z-index: 10;
   -webkit-box-orient: vertical;
@@ -752,14 +706,6 @@
   top: -10px;
   right: 0;
   left: 0;
-}
-
-li:hover .header__nav-link {
-  color: #ffc733;
-}
-
-li:hover .header__nav-link::after {
-  width: 100%;
 }
 
 .header__nav-link {
@@ -786,7 +732,7 @@ li:hover .header__nav-link::after {
   width: 0;
   height: 1px;
   background-color: #ffb900;
-  bottom: -38px;
+  bottom: -33px;
   left: 0;
 }
 
@@ -830,23 +776,22 @@ li:hover .header__nav-link::after {
 
 .header__number-list {
   padding: 10px 0;
-  width: 170px;
   position: relative;
 }
 
 .number-item-active {
-    display: none;
-    padding: 10px 0;
-    margin-right: 6px
+  display: none;
+  padding: 10px 0;
+  margin-right: 6px;
 }
 
 .number-item-active.active {
-    display: block
+  display: block;
 }
 
 .header__number-item {
-    font-family: "Montserrat-Medium";
-    color: #000
+  font-family: "Montserrat-Medium";
+  color: #000;
 }
 
 .header_fixed {
@@ -932,7 +877,8 @@ header.header {
 }
 
 .header__city-content {
-  width: 1150px;
+  max-width: 1150px;
+  width: 100%;
 }
 
 .header__city-list {
@@ -944,7 +890,6 @@ header.header {
   position: relative;
   display: block;
   width: 100%;
-  max-width: 160px;
 }
 
 .header__city {
@@ -955,7 +900,7 @@ header.header {
   position: fixed;
   left: 50%;
   z-index: 10;
-  display: none;
+  display: block;
   -webkit-transform: translateX(-50%);
   -ms-transform: translateX(-50%);
   transform: translateX(-50%);
@@ -1095,9 +1040,25 @@ header.header {
   transform: rotate(45deg);
 }
 
+@media (min-width: 1081px) {
+  .header__item:hover .header__dropdown {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+}
+
 @media (min-width: 1024px) {
-    .active_li_a:hover {
+  .active_li_a:hover {
     color: #e31e24 !important;
+  }
+
+  li:hover .header__nav-link {
+    color: #ffc733;
+  }
+
+  li:hover .header__nav-link::after {
+    width: 100%;
   }
 
   .header__city-prev:hover {
@@ -1122,6 +1083,10 @@ header.header {
     -webkit-transform: none;
     -ms-transform: none;
     transform: none;
+  }
+
+  .header__numbers-tel:hover {
+    text-decoration: underline;
   }
 }
 
@@ -1165,6 +1130,165 @@ header.header {
     -ms-flex: 0 0 100%;
     flex: 0 0 100%;
   }
+}
 
+@media screen and (max-width: 1080px) {
+  .header__dropdown.active {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+
+  .header__nav {
+    height: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    margin-top: 65.5px;
+  }
+
+  .header__burger {
+    -webkit-box-ordinal-group: 4;
+    -ms-flex-order: 3;
+    order: 3;
+    display: block;
+  }
+
+  .header__nav {
+    -webkit-transform: translatex(100%);
+    -ms-transform: translatex(100%);
+    transform: translatex(100%);
+    height: 100vh !important;
+    width: 100vw;
+    overflow: auto;
+    -webkit-transition: 0.4s;
+    -o-transition: 0.4s;
+    transition: 0.4s;
+    visibility: hidden;
+    opacity: 0;
+    right: -15px;
+    top: 25px;
+    z-index: 2;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    position: absolute;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .header__nav.nav_active {
+    -webkit-transform: none;
+    -ms-transform: none;
+    transform: none;
+  }
+
+  .header__nav-link .active::before {
+    content: "";
+    position: absolute;
+  }
+
+  .header__list {
+    margin-bottom: 80px;
+  }
+
+  .header__item {
+    margin: 0 !important;
+  }
+
+  .header__dropdown {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0;
+    top: 0;
+    position: relative;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .header__dropdown1 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 100%;
+    flex: 0 1 100%;
+    margin: 0;
+  }
+
+  .header__dropdown2 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 100%;
+    flex: 0 1 100%;
+  }
+
+  .header__item {
+    text-align: center;
+    height: auto;
+    font-size: 20px;
+    padding: 20px;
+  }
+
+  .header__list {
+    background-color: #fff;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+
+  .header__nav-link::after {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-bottom__cab {
+    display: block;
+  }
+
+  header.header {
+    min-height: auto;
+    position: fixed;
+    z-index: 2;
+    width: 100%;
+    top: 0;
+  }
+
+  .header__nav {
+    background-color: #fff;
+  }
+  .header__list {
+    align-items: baseline;
+  }
+  .header__dropdown {
+    border: 0;
+    padding-left: 15px;
+  }
+
+  .header__top {
+    display: none;
+  }
+
+  .header__city-content {
+    width: 100% !important;
+    overflow: auto;
+    height: 100%;
+  }
+  .header__city-list {
+    columns: 2 !important;
+  }
+
+  .header__city-block {
+    display: block !important;
+  }
 }
 </style>
