@@ -319,7 +319,7 @@ onMounted(() => window.addEventListener("scroll", scrollHeaderFixed));
               </li>
 
               <li class="header__item">
-                <router-link :to="{name: 'Contacts'}" class="header__nav-link">Контакты</router-link>
+                <router-link :to="{name: 'Contacts'}" @click="switchOffBurger" class="header__nav-link">Контакты</router-link>
               </li>
             </ul>
 

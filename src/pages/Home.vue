@@ -4161,7 +4161,7 @@ input:focus:required:invalid {
 }
 
 @media screen and (max-width: 610px) {
-  .content__examples-card {
+  .content__examples-inner .content__examples-card {
     text-align: center;
     display: -webkit-box;
     display: -ms-flexbox;

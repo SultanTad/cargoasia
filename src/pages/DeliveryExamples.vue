@@ -5,15 +5,55 @@ import SendQuestion from "../components/SendQuestion.vue";
 
 const tabItems = reactive([
   {
-    title: "Доставка грузов",
+    title: "География грузов",
+    activeTab: false,
     items: [
-      { name: "Доставка из Гуанчжоу", url: "" },
-      { name: "Авто-доставка из Китая", url: "" },
-      { name: "Доставка из ИУ", url: "" },
-      { name: "Авиа доставка из Китая", url: "" },
+      { name: "Доставка собраных грузов", url: "" },
+      { name: "Доставка авто", url: "" },
+      { name: "Доставка авиа", url: "" },
+      { name: "Доставка морем", url: "" },
+      { name: "Доставка поездом", url: "" },
+      { name: "Мультимодальные перевозки", url: "" },
     ],
   },
-  { title: "Доставка товаров", items: [{ name: "Посылка из Китая", url: "" }] },
+  {
+    title: "Доставка товаров",
+    activeTab: false,
+    items: [
+      { name: "Доставка оборудования", url: "" },
+      { name: "Доставка грузов от 1 до 5 кг.", url: "" },
+      { name: "Доставка мелких грузов", url: "" },
+      { name: "Доставка морем", url: "" },
+      { name: "Доставка поездом", url: "" },
+    ],
+  },
+  {
+    title: "География перевозок",
+    activeTab: false,
+    items: [
+      { name: "Доставка", url: "" },
+      { name: "Доставка", url: "" },
+      { name: "Доставка", url: "" },
+    ],
+  },
+  {
+    title: "Наши грузы",
+    activeTab: false,
+    items: [
+      { name: "Доставка", url: "" },
+      { name: "Доставка", url: "" },
+      { name: "Доставка", url: "" },
+    ],
+  },
+  {
+    title: "Наши услуги",
+    activeTab: false,
+    items: [
+      { name: "Доставка", url: "" },
+      { name: "Доставка", url: "" },
+      { name: "Доставка", url: "" },
+    ],
+  },
 ]);
 </script>
 <template>

@@ -1,5 +1,9 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
+
+import ModalSuccess from "./ModalSuccess.vue";
+
+const modalSuccess = ref(false);
 
 const formQuestions = reactive({
   name: "",
@@ -42,6 +46,20 @@ const validateFormQuestions = () => {
   } else {
     errors.email = false;
   }
+
+  if (
+    errors.name == false &&
+    errors.phone == false &&
+    errors.email == false
+  ) {
+    modalSuccess.value = true;
+    document.body.style.overflow = "hidden";
+  }
+};
+
+const deactiveModalSuccess = () => {
+  modalSuccess.value = false;
+  document.body.style.overflow = "inherit";
 };
 </script>
 <template>
@@ -91,6 +109,7 @@ const validateFormQuestions = () => {
       </div>
     </div>
   </div>
+  <ModalSuccess v-if="modalSuccess" @close="deactiveModalSuccess" />
 </template>
 
 <style>
