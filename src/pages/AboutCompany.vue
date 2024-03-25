@@ -1,5 +1,5 @@
 <template>
-  <sectio class="about-company">
+  <section class="about-company">
     <div class="container">
       <br />
       <h1>Компания Азия Карго</h1>
@@ -30,7 +30,7 @@
       <p></p>
       <br />
     </div>
-  </sectio>
+  </section>
 </template>
 
 <style>

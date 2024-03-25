@@ -2,14 +2,17 @@
 import Footer from "./components/Footer.vue";
 import Header from "./components/Header.vue";
 
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 </script>
 
 <template>
   <div class="wrapper">
-    <Header />
-    <router-view></router-view>
+    <Header :key="route.fullPath"/>
+    <router-view :key="route.fullPath"></router-view>
     <Footer />
   </div>
 </template>
 
-<style scoped></style>
+<style></style>

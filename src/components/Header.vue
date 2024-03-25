@@ -1,5 +1,7 @@
 <script setup>
 import { ref, onMounted, reactive } from "vue";
+import { useRoute } from "vue-router";
+import axios from "axios";
 
 import ModalCities from "./ModalCities.vue";
 import ModalForm from "./ModalForm.vue";
@@ -11,6 +13,11 @@ const burgerBtnActive = ref(false);
 const activeCity = ref(false);
 const modalForm = ref(false);
 const modalSuccess = ref(false);
+const menu = ref([]);
+const finalMenu = ref([]);
+const cargoTransportation = ref([]);
+const route = useRoute();
+const services = ref([]);
 
 const scrollHeaderFixed = () => {
   let windowCenter = window.pageYOffset || document.documentElement.scrollTop;
@@ -36,12 +43,6 @@ const errors = reactive({
 const titleModalForm = reactive([{ title: "Заполните форму" }]);
 
 const btnModalForm = reactive([{ btn: "Отправить" }]);
-
-const validEmail = (email) => {
-  let res =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return res.test(email);
-};
 
 const validatePhone = (phone) => {
   const phoneRegex = /^(?:[0-9] ?){6,14}[0-9]$/;
@@ -120,6 +121,32 @@ const deactiveModalSuccess = () => {
 };
 
 onMounted(() => window.addEventListener("scroll", scrollHeaderFixed));
+
+onMounted(async () => {
+  const { data } = await axios("https://api.waix.ru/site/navigate/?project=2");
+  menu.value = data.result.main;
+  let pageNames = [
+    'CargoTransportation',
+    'Services',
+    'AboutCompany',
+    'CreateOrder',
+    'Contacts',
+  ];
+  let newMenu = menu.value;
+  for (let key in newMenu) {
+    newMenu[key]["pageName"] = pageNames[key];
+  }
+  finalMenu.value = newMenu
+  // console.log(data);
+  console.log(finalMenu);
+});
+
+onMounted(async () => {
+  const { data } = await axios("https://api.waix.ru/site/navigate/?project=2");
+  cargoTransportation.value = data.result.gruzoperevozki;
+  // console.log(data);
+  // console.log(cargoTransportation.value);
+});
 </script>
 <template>
   <header class="header">
@@ -195,7 +222,8 @@ onMounted(() => window.addEventListener("scroll", scrollHeaderFixed));
       <div class="container">
         <div class="header__content-wrapper">
           <div class="header__logo">
-            <router-link :to="{ name: 'Home' }"
+            <router-link
+              :to="{ name: 'Home', params: { city: route.params.city } }"
               ><picture
                 ><source srcset="/images/logo.webp" type="image/webp" />
                 <img
@@ -232,94 +260,42 @@ onMounted(() => window.addEventListener("scroll", scrollHeaderFixed));
           </div>
           <nav class="header__nav" :class="{ nav_active: burgerActive }">
             <ul class="header__list">
-              <li class="header__item">
+              <li class="header__item" v-for="menuItem in finalMenu">
                 <router-link
-                  :to="{ name: 'CargoTransportation' }"
+                  :to="{
+                    name: menuItem.pageName,
+                    params: { city: route.params.city },
+                  }"
                   @click="switchOffBurger"
                   class="header__nav-link active nav-link-tap gruz_click"
-                  >Грузоперевозка</router-link
+                  >{{ menuItem.title }}</router-link
                 >
                 <ul class="header__dropdown">
-                  <ul class="header__dropdown1">
+                  <ul
+                    class="header__dropdown1"
+                    v-for="dropList in cargoTransportation"
+                  >
                     <li class="header__dropdown-item">
-                      <a href="#" class="header__dropdown-linkTitle"
-                        >Доставка грузов</a
-                      >
+                      <div class="header__dropdown-linkTitle">
+                        {{ dropList.title }}
+                      </div>
                     </li>
 
-                    <li class="header__dropdown-item">
+                    <li
+                      class="header__dropdown-item"
+                      v-for="dropItem in dropList.sub"
+                    >
                       <router-link
-                        :to="{ name: 'DeliveryFromCities' }"
+                        :to="{
+                          name: 'DeliveryFromCities',
+                          params: { id: dropItem.url },
+                        }"
                         class="header__dropdown-link"
-                        >Доставка из Гуанчжоу</router-link
-                      >
-                    </li>
-
-                    <li class="header__dropdown-item">
-                      <a
-                        href="/msk/gruzoperevozki/avto-dostavka-iz-kitaya/"
-                        class="header__dropdown-link"
-                        >Авто-доставка из Китая</a
-                      >
-                    </li>
-
-                    <li class="header__dropdown-item">
-                      <a
-                        href="/msk/gruzoperevozki/dostavka-iz-iu/"
-                        class="header__dropdown-link"
-                        >Доставка из ИУ</a
-                      >
-                    </li>
-
-                    <li class="header__dropdown-item">
-                      <a
-                        href="/msk/gruzoperevozki/avia-dostavka/"
-                        class="header__dropdown-link"
-                        >Авиа доставка из Китая</a
-                      >
-                    </li>
-                  </ul>
-                  <ul class="header__dropdown2">
-                    <li class="header__dropdown-item">
-                      <a href="#" class="header__dropdown-linkTitle"
-                        >Доставка товаров</a
-                      >
-                    </li>
-                    <li class="header__dropdown-item">
-                      <a
-                        href="/msk/gruzoperevozki/posylka-iz-kitaya/"
-                        class="header__dropdown-link"
-                        >Посылка из Китая</a
+                        >{{ dropItem.title }}</router-link
                       >
                     </li>
                   </ul>
                 </ul>
-              </li>
-
-              <li class="header__item">
-                <router-link
-                  :to="{ name: 'Services' }"
-                  @click="switchOffBurger"
-                  class="header__nav-link"
-                  >Услуги</router-link
-                >
-              </li>
-
-              <li class="header__item">
-                <router-link
-                  :to="{ name: 'AboutCompany' }"
-                  @click="switchOffBurger"
-                  class="header__nav-link"
-                  >О компании</router-link
-                >
-              </li>
-
-              <li class="header__item">
-                <a href="/msk/lk.php" class="header__nav-link">Создать заказ</a>
-              </li>
-
-              <li class="header__item">
-                <router-link :to="{name: 'Contacts'}" @click="switchOffBurger" class="header__nav-link">Контакты</router-link>
               </li>
             </ul>
 
@@ -352,10 +328,11 @@ onMounted(() => window.addEventListener("scroll", scrollHeaderFixed));
                   >+86 17800696877</a
                 >
               </div>
-              <div @click="activeModalForm" class="header__btn-wrap btn-wrap-menu">
-                <div class="header__btn btn-wrap-menu"
-                  >Заказать звонок</div
-                >
+              <div
+                @click="activeModalForm"
+                class="header__btn-wrap btn-wrap-menu"
+              >
+                <div class="header__btn btn-wrap-menu">Заказать звонок</div>
               </div>
             </div>
           </nav>
@@ -429,7 +406,6 @@ onMounted(() => window.addEventListener("scroll", scrollHeaderFixed));
 </template>
 
 <style>
-
 .header__btn-wrap {
   cursor: pointer;
 }
@@ -1041,7 +1017,7 @@ header.header {
 }
 
 @media (min-width: 1081px) {
-  .header__item:hover .header__dropdown {
+  .header__item:first-child:hover .header__dropdown {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;

@@ -1,12 +1,17 @@
 <script setup>
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+
 defineEmits(["deactiveCityModal"]);
+
 </script>
 <template>
   <div class="header__city">
     <div class="header__city-content">
       <ul class="header__city-list" style="columns: 5">
         <li class="header__city-item">
-          <a href="/spb/">Санкт-Петербург</a>
+          <router-link :to="{name: route.name, params: {city: 'spb'} }">Санкт-Петербург</router-link>
         </li>
         <li class="header__city-item">
           <a href="/nsk/">Новосибирск</a>

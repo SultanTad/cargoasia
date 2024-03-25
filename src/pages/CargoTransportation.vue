@@ -9,7 +9,7 @@
       <div class="content">
         <ul class="content__links">
           <li class="content__item">
-            <a href="/msk/" class="content__link">Главная</a>
+            <router-link :to="{path: '/'}" class="content__link">Главная</router-link>
           </li>
           <li class="content__item">\</li>
           <li class="content__item">Грузоперевозки</li>
@@ -19,7 +19,7 @@
             <div class="col-md-4">
               <div class="content__examples-card">
                 <div class="content__examples-imgBl">
-                  <router-link :to="{name: 'DeliveryFromCities'}"
+                  <router-link :to="{path: '/%2Fgruzoperevozki%2Fdostavka-iz-guanchzhou%2F'}"
                     ><picture
                       ><source
                         srcset="/images/ddc5a0913829b84936cc3d49a059616f.jpg"
@@ -30,12 +30,12 @@
                   ></router-link>
                 </div>
                 <h3 class="content__examples-title">
-                  <router-link :to="{name: 'DeliveryFromCities'}"
+                  <router-link :to="{path: '/gruzoperevozki/dostavka-iz-guanchzhou/'}"
                     >Доставка из Гуанчжоу</router-link
                   >
                 </h3>
                 <router-link
-                  :to="{ name:'DeliveryFromCities' }"
+                  :to="{ path:'/gruzoperevozki/dostavka-iz-guanchzhou/' }"
                   class="content__examples-btn"
                   >Подробнее</router-link
                 >

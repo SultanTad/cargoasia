@@ -2,30 +2,16 @@
 defineProps({
   tabItems: Array,
 });
-
-const toggleActiveTab = (tabState) => {
-  tabState = !tabState
-};
 </script>
 <template>
   <div class="aside">
     <div class="aside__tab tab-1" v-for="arr in tabItems">
-        <p
-          class="aside__tab-title title-1"
-          @click="arr.activeTab = !arr.activeTab"
-          :class="{ active: arr.activeTab }"
-          >{{ arr.title }}</p
-        >
-      <ul
-        class="aside__tab-list content-1"
-        :class="{ active: arr.activeTab }"
-      >
+      <p class="aside__tab-title title-1 active">{{ arr.title }}</p>
+      <ul class="aside__tab-list content-1 active">
         <li class="aside__tab-item" v-for="item in arr.items" :key="item">
-          <router-link
-            :to="{name: item.url}"
-            class="aside__tab-link"
-            >{{ item.name }}</router-link
-          >
+          <router-link :to="{ name: item.url }" class="aside__tab-link">{{
+            item.name
+          }}</router-link>
         </li>
       </ul>
     </div>

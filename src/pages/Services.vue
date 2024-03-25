@@ -7,13 +7,11 @@
       <div class="content">
         <ul
           class="content__links"
-          itemscope=""
           itemtype="https://schema.org/BreadcrumbList"
         >
           <li
             class="content__item"
             itemprop="itemListElement"
-            itemscope=""
             itemtype="https://schema.org/ListItem"
           >
             <a href="/msk/" class="content__link" itemprop="item">
@@ -25,7 +23,6 @@
           <li
             class="content__item"
             itemprop="itemListElement"
-            itemscope=""
             itemtype="https://schema.org/ListItem"
           >
             <span itemprop="name">Услуги</span>

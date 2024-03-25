@@ -6,7 +6,6 @@ import SendQuestion from "../components/SendQuestion.vue";
 const tabItems = reactive([
   {
     title: "География грузов",
-    activeTab: false,
     items: [
       { name: "Доставка собраных грузов", url: "" },
       { name: "Доставка авто", url: "" },
@@ -18,7 +17,6 @@ const tabItems = reactive([
   },
   {
     title: "Доставка товаров",
-    activeTab: false,
     items: [
       { name: "Доставка оборудования", url: "" },
       { name: "Доставка грузов от 1 до 5 кг.", url: "" },
@@ -29,7 +27,6 @@ const tabItems = reactive([
   },
   {
     title: "География перевозок",
-    activeTab: false,
     items: [
       { name: "Доставка", url: "" },
       { name: "Доставка", url: "" },
@@ -38,7 +35,6 @@ const tabItems = reactive([
   },
   {
     title: "Наши грузы",
-    activeTab: false,
     items: [
       { name: "Доставка", url: "" },
       { name: "Доставка", url: "" },
@@ -47,7 +43,6 @@ const tabItems = reactive([
   },
   {
     title: "Наши услуги",
-    activeTab: false,
     items: [
       { name: "Доставка", url: "" },
       { name: "Доставка", url: "" },
