@@ -66,7 +66,7 @@ const deliveryNext = ref(null);
       </swiper-slide>
       <swiper-slide class="content__examples-card">
         <div class="content__examples-imgBl" style="overflow: hidden">
-          <a href="/msk/examples/dostavka-oborudovaniya-iz-kitaya/" tabindex="0"
+          <router-link :to="{name: 'DeliveryExamplesClothing'}" tabindex="0"
             ><picture
               ><source
                 srcset="/images/3d91cb3fd624f6f0ce26cf8f3ddfa7af.jpg"
@@ -74,18 +74,18 @@ const deliveryNext = ref(null);
               <img
                 src="/images/3d91cb3fd624f6f0ce26cf8f3ddfa7af.jpg"
                 alt="clothers" /></picture
-          ></a>
+          ></router-link>
         </div>
         <h3 class="content__examples-title">
-          <a href="/images/dostavka-oborudovaniya-iz-kitaya/" tabindex="0"
-            >Доставка оборудования из Китая</a
+          <router-link :to="{name: 'DeliveryExamplesClothing'}" tabindex="0"
+            >Доставка оборудования из Китая</router-link
           >
         </h3>
-        <a
-          href="/msk/examples/dostavka-oborudovaniya-iz-kitaya/"
+        <router-link
+        :to="{name: 'DeliveryExamplesClothing'}"
           class="content__examples-btn"
           tabindex="0"
-          >Подробнее</a
+          >Подробнее</router-link
         >
       </swiper-slide>
     </swiper>

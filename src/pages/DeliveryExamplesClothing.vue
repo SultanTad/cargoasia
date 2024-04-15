@@ -246,11 +246,11 @@ const tabItems = reactive([
               <h2 class="title-block">Другие примеры грузоперевозок</h2>
               <div class="content__examples-imgBl" style="overflow: hidden">
                 <router-link
-                  :to="{name: 'DeliveryExamplesClothing'}"
+                  :to="{name: 'DeliveryExamples'}"
                   tabindex="0"
                   ><picture
                     ><source
-                      srcset="/images/3d91cb3fd624f6f0ce26cf8f3ddfa7af.jpg"
+                      srcset="/images/1a9f031e99394ccecfe44a1b69a5ace4.jpg"
                       type="image/webp" />
                     <img
                       src="/images/3d91cb3fd624f6f0ce26cf8f3ddfa7af.jpg"
@@ -258,12 +258,12 @@ const tabItems = reactive([
                 ></router-link>
               </div>
               <h3 class="content__examples-title">
-                <router-link :to="{name: 'DeliveryExamplesClothing'}" tabindex="0"
+                <router-link :to="{name: 'DeliveryExamples'}" tabindex="0"
                   >Доставка оборудования из Китая</router-link
                 >
               </h3>
               <router-link
-              :to="{name: 'DeliveryExamplesClothing'}"
+              :to="{name: 'DeliveryExamples'}"
                 class="content__examples-btn"
                 tabindex="0"
                 >Подробнее</router-link

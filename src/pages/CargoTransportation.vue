@@ -19,7 +19,7 @@
             <div class="col-md-4">
               <div class="content__examples-card">
                 <div class="content__examples-imgBl">
-                  <router-link :to="{path: '/%2Fgruzoperevozki%2Fdostavka-iz-guanchzhou%2F'}"
+                  <router-link to="/%2Fgruzoperevozki%2Fdostavka-iz-guanchzhou%2F"
                     ><picture
                       ><source
                         srcset="/images/ddc5a0913829b84936cc3d49a059616f.jpg"

@@ -17,7 +17,7 @@ const menu = ref([]);
 const finalMenu = ref([]);
 const cargoTransportation = ref([]);
 const route = useRoute();
-const services = ref([]);
+const city = ref("");
 
 const scrollHeaderFixed = () => {
   let windowCenter = window.pageYOffset || document.documentElement.scrollTop;
@@ -120,33 +120,39 @@ const deactiveModalSuccess = () => {
   document.body.style.overflow = "inherit";
 };
 
-onMounted(() => window.addEventListener("scroll", scrollHeaderFixed));
+const changeCity = (event) => {
+  city.value = event;
+  console.log(city.value);
+};
 
-onMounted(async () => {
+const getNavMenu = async () => {
   const { data } = await axios("https://api.waix.ru/site/navigate/?project=2");
   menu.value = data.result.main;
   let pageNames = [
-    'CargoTransportation',
-    'Services',
-    'AboutCompany',
-    'CreateOrder',
-    'Contacts',
+    "CargoTransportation",
+    "Services",
+    "AboutCompany",
+    "CreateOrder",
+    "Contacts",
   ];
   let newMenu = menu.value;
   for (let key in newMenu) {
     newMenu[key]["pageName"] = pageNames[key];
   }
-  finalMenu.value = newMenu
-  // console.log(data);
-  console.log(finalMenu);
-});
+  finalMenu.value = newMenu;
+};
 
-onMounted(async () => {
+const getCargoTransportation = async () => {
   const { data } = await axios("https://api.waix.ru/site/navigate/?project=2");
   cargoTransportation.value = data.result.gruzoperevozki;
-  // console.log(data);
-  // console.log(cargoTransportation.value);
+};
+
+onMounted(async () => {
+  window.addEventListener("scroll", scrollHeaderFixed);
+  await getNavMenu();
+  await getCargoTransportation();
 });
+
 </script>
 <template>
   <header class="header">
@@ -154,10 +160,23 @@ onMounted(async () => {
       <div class="container">
         <div class="header__top-wrapper">
           <div class="header__city-block">
-            <span class="header__city-prev" @click="activeCityModal"
+            <span
+              v-if="route.params.city === 'msk'"
+              class="header__city-prev"
+              @click="activeCityModal"
               >г. Москва</span
             >
-            <ModalCities v-if="activeCity" @close="deactiveCityModal" />
+            <span
+              v-else-if="route.params.city !== 'msk'"
+              class="header__city-prev"
+              @click="activeCityModal"
+              >г. {{ city }}</span
+            >
+            <ModalCities
+              v-if="activeCity"
+              @close="deactiveCityModal"
+              @getCityName="changeCity($event)"
+            />
           </div>
           <div class="header__numbers">
             <a href="tel:88047004223" class="header__numbers-tel"

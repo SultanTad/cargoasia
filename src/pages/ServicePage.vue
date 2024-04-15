@@ -1,14 +1,44 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref, onMounted } from "vue";
+import axios from "axios";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 import AsideTabs from "../components/AsideTabs.vue";
 import SendQuestion from "../components/SendQuestion.vue";
 import DeliveryExamples from "../components/DeliveryExamples.vue";
 
+const urls = ref([]);
+const services = ref([]);
+
+const getServices = async () => {
+  const { data } = await axios.get(
+    "https://api.waix.ru/site/navigate/?project=2"
+  );
+  urls.value = data.result.services;
+  console.log(urls);
+  let pageId = [];
+  urls.value.filter((item) => {
+    "/" + route.params.city + item.url == route.path
+      ? pageId.push(item.id)
+      : "No";
+    console.log(route.params.city + item.url == route.path);
+  });
+  const res = await axios.get(
+    `https://api.waix.ru/site/pages/${pageId}?project=2`
+  );
+  services.value = res.data.result;
+  console.log(res);
+};
+
+onMounted(async () => {
+  await getServices();
+});
+
 const tabItems = reactive([
   {
     title: "Другие услуги",
-    activeTab: false,
     items: [
       { name: "Поиск поставщика в Китае", url: "" },
       { name: "Страхование груза", url: "" },
@@ -26,7 +56,7 @@ const tabItems = reactive([
 <template>
   <div class="main-content">
     <div class="container">
-      <h1 class="main-content__title">Аренда склада</h1>
+      <h1 class="main-content__title">{{ services.title }}</h1>
     </div>
     <div class="container">
       <div class="main-content__wrapper">
@@ -75,71 +105,7 @@ const tabItems = reactive([
             </li>
           </ul>
           <div class="content__wrapper">
-            <div class="content__top">
-              <p class="">
-                Наша компания, Азия Карго, предлагает<b>
-                  широкий спектр складских услуг</b
-                >
-                для хранения грузов перед отправкой в Россию. Мы понимаем
-                важность надежного хранения товаров, поэтому наши склады созданы
-                с учетом высоких стандартов безопасности и комфорта.<br />
-                <br />
-                Наши складские помещения предоставляют<b>
-                  возможность консолидировать ваши товары от различных
-                  поставщиков</b
-                >, что позволяет сократить затраты на логистику и обеспечить
-                эффективную упаковку и организацию грузов. Мы принимаем на
-                хранение различные виды товаров - от одежды и обуви до
-                крупногабаритных грузов.<br />
-                <br />
-                Одним из ключевых преимуществ наших складов является
-                <b>наличие теплых крытых помещений</b>. Это гарантирует, что
-                ваши товары будут защищены от неблагоприятных погодных условий,
-                сохраняя свою целостность и качество.<br />
-                <br />
-                Мы придаем большое значение безопасности грузов, поэтому наши
-                <b
-                  >склады оборудованы круглосуточной охраной и системой
-                  видеонаблюдения</b
-                >. Вы можете быть уверены, что ваш груз находится под надежной
-                защитой и будет сохранен в идеальном состоянии до момента
-                отправки.<br />
-                <br />
-                Доверьтесь нам с хранением ваших грузов на наших складах. Мы
-                предоставим вам надежное и безопасное решение для консолидации и
-                хранения товаров, обеспечивая
-                <b>оптимальные условия и сохранность вашего груза</b> во время
-                его пребывания на наших складах в Китае.<br />
-              </p>
-            </div>
-            <div class="content__rates">
-              <h2 class="title-block">Тарифы доставки</h2>
-              <div class="content__rates-wrapper">
-                <div class="content__rates-card">
-                  <span
-                    class="content__card-title"
-                    style="padding: 4px 0; padding-left: 20px"
-                    >Авто-доставка экспресс</span
-                  >
-                  <span class="content__card-text">Срок: 15-20 дней</span>
-                  <span class="content__card-text"
-                    >Стоимость: От $2,5 за кг</span
-                  >
-                </div>
-                <div class="content__rates-card">
-                  <span class="content__card-title">Авто-доставка</span>
-                  <span class="content__card-text">Срок: 25-30 дней</span>
-                  <span class="content__card-text">Стоимость: От $1,4</span>
-                </div>
-                <div class="content__rates-card">
-                  <span class="content__card-title card-title-vip"
-                    >Ж/Д доставка</span
-                  >
-                  <span class="content__card-text">Срок: 30-35 дней</span>
-                  <span class="content__card-text">Стоимость: От $1</span>
-                </div>
-              </div>
-            </div>
+            <div v-html="services.content"></div>
             <DeliveryExamples />
           </div>
         </div>

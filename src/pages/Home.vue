@@ -1785,6 +1785,8 @@ const deactiveModalSuccess = () => {
   </ModalForm>
 
   <ModalSuccess v-if="modalSuccess" @close="deactiveModalSuccess" />
+
+  
 </template>
 
 <style>
