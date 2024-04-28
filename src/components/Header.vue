@@ -1,11 +1,12 @@
 <script setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted, reactive, computed } from "vue";
 import { useRoute } from "vue-router";
 import axios from "axios";
 
 import ModalCities from "./ModalCities.vue";
 import ModalForm from "./ModalForm.vue";
 import ModalSuccess from "./ModalSuccess.vue";
+import { CITIES } from "../const.js";
 
 const headerFixed = ref(false);
 const burgerActive = ref(false);
@@ -17,7 +18,6 @@ const menu = ref([]);
 const finalMenu = ref([]);
 const cargoTransportation = ref([]);
 const route = useRoute();
-const city = ref("");
 
 const scrollHeaderFixed = () => {
   let windowCenter = window.pageYOffset || document.documentElement.scrollTop;
@@ -120,10 +120,9 @@ const deactiveModalSuccess = () => {
   document.body.style.overflow = "inherit";
 };
 
-const changeCity = (event) => {
-  city.value = event;
-  console.log(city.value);
-};
+const cityName = computed(() => {
+  return CITIES[route.params.city];
+});
 
 const getNavMenu = async () => {
   const { data } = await axios("https://api.waix.ru/site/navigate/?project=2");
@@ -152,7 +151,6 @@ onMounted(async () => {
   await getNavMenu();
   await getCargoTransportation();
 });
-
 </script>
 <template>
   <header class="header">
@@ -170,13 +168,9 @@ onMounted(async () => {
               v-else-if="route.params.city !== 'msk'"
               class="header__city-prev"
               @click="activeCityModal"
-              >г. {{ city }}</span
+              >г. {{ cityName }}</span
             >
-            <ModalCities
-              v-if="activeCity"
-              @close="deactiveCityModal"
-              @getCityName="changeCity($event)"
-            />
+            <ModalCities v-if="activeCity" @close="deactiveCityModal" />
           </div>
           <div class="header__numbers">
             <a href="tel:88047004223" class="header__numbers-tel"
